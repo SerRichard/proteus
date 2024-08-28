@@ -1,0 +1,18 @@
+{
+    "name": "proteus",
+
+    "dockerComposeFile": "./docker-compose.yml",
+    
+    "service": "workspace",
+
+    "workspaceFolder": "/proteus",
+
+	"extensions": [
+        "golang.go",
+		"eamodio.gitlens",
+		"GitLab.gitlab-workflow",
+		"ms-azuretools.vscode-docker",
+        "github.copilot"
+	]
+
+}
