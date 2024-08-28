@@ -11,7 +11,8 @@ RUN apt-get update && apt-get install -y \
     gcc \
     make \
     ca-certificates \
-    golang
+    golang \
+    pre-commit
 
 # Configure Go
 ENV GOROOT /usr/lib/go
