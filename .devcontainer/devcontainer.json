@@ -1,18 +1,28 @@
 {
+    "image": "debian:trixie",
+
     "name": "proteus",
-
-    "dockerComposeFile": "./docker-compose.yml",
     
-    "service": "workspace",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "golang.go",
+                "eamodio.gitlens",
+                "GitLab.gitlab-workflow",
+                "ms-azuretools.vscode-docker",
+                "github.copilot"
+            ],
+            "settings": {
+                "terminal.integrated.shell.linux": "/bin/zsh"
+            }
+        }
+    },
 
-    "workspaceFolder": "/proteus",
-
-	"extensions": [
-        "golang.go",
-		"eamodio.gitlens",
-		"GitLab.gitlab-workflow",
-		"ms-azuretools.vscode-docker",
-        "github.copilot"
-	]
-
+    "features": {
+        "ghcr.io/devcontainers/features/go:1": {
+          "version": "1.23"
+        }
+    },
+    
+    "postCreateCommand": "git config --global --add safe.directory /workspaces/proteus && apt-get update && apt-get install -y pre-commit && pre-commit install"
 }
