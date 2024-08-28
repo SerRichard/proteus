@@ -1,15 +1,11 @@
 package transpiler
 
-import (
-	"fmt"
-)
+import ()
 
 const (
 	CWLVersion = "v1.2"
 )
 
 func TranspileFile() {
-
-	fmt.Println("TRANSPILE FILE")
 
 }

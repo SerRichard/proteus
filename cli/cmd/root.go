@@ -18,7 +18,6 @@ Proteus currently supports transpiling the following languages to Argo Workflows
 			cmd.HelpFunc()(cmd, args)
 		},
 	}
-		
 	command.AddCommand(TranspileCommand())
 
 	return command
