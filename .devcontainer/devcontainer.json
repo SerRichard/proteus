@@ -24,5 +24,5 @@
         }
     },
     
-    "postCreateCommand": "git config --global --add safe.directory /workspaces/proteus && apt-get update && apt-get install -y pre-commit && pre-commit install"
+    "postCreateCommand": "git config --global --add safe.directory /workspaces/proteus && apt-get update && apt-get install -y openssh-client pre-commit && pre-commit install"
 }
