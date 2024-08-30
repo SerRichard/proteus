@@ -2,6 +2,8 @@
     "image": "debian:trixie",
 
     "name": "proteus",
+
+    "workspaceFolder": "/workspaces/proteus",
     
     "customizations": {
         "vscode": {
@@ -10,7 +12,8 @@
                 "eamodio.gitlens",
                 "GitLab.gitlab-workflow",
                 "ms-azuretools.vscode-docker",
-                "github.copilot"
+                "github.copilot",
+                "ethan-reesor.vscode-go-test-adapter"
             ],
             "settings": {
                 "terminal.integrated.shell.linux": "/bin/zsh"
