@@ -52,8 +52,17 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         path: dist/
-
-    - name: Create GitHub Release
+  
+    - name: Print current directory
+      run: pwd
+  
+    - name: List files in dist with absolute path
+      run: ls -l ${{ github.workspace }}/dist/
+  
+    - name: Create Release
+      id: create_release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: dist/proteus-darwin-amd64 dist/proteus-linux-amd64 dist/proteus-windows-amd64
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: gh release create ${{ env.TAG_NAME }} dist/*-${{ env.TAG_NAME }}* --title "Release ${{ env.TAG_NAME }}" --notes "Automated release for ${{ env.TAG_NAME }}"
