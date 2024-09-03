@@ -37,11 +37,14 @@ jobs:
       if: matrix.goos != 'windows'
       run: gzip dist/your-tool-${{ matrix.goos }}-${{ matrix.goarch }}-${{ env.TAG_NAME }}
 
+    - name: List files in dist with absolute path
+      run: ls dist/
+
     - name: Upload Release Asset
       uses: actions/upload-artifact@v3
       with:
         name: proteus-${{ matrix.goos }}-${{ matrix.goarch }}
-        path: dist/proteus-${{ matrix.goos }}-${{ matrix.goarch }}*
+        path: dist/proteus-${{ matrix.goos }}-${{ matrix.goarch }}-${{ env.TAG_NAME }}*
 
   release:
     name: Create GitHub Release
