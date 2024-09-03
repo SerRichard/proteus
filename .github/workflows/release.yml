@@ -53,6 +53,6 @@ jobs:
       id: create_release
       uses: softprops/action-gh-release@v1
       with:
-        files: dist/*
+        files: proteus/dist/*
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
