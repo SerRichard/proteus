@@ -31,7 +31,7 @@ jobs:
     - name: Build Binary
       run: |
         mkdir -p dist/
-        GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/your-tool-${{ matrix.goos }}-${{ matrix.goarch }}-${{ env.TAG_NAME }}
+        GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/your-tool-${{ matrix.goos }}-${{ matrix.goarch }}-${{ env.TAG_NAME }} ./cli
 
     - name: Compress Binary
       if: matrix.goos != 'windows'
