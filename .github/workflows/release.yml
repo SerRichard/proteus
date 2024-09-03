@@ -35,7 +35,7 @@ jobs:
 
     - name: Compress Binary
       if: matrix.goos != 'windows'
-      run: gzip dist/your-tool-${{ matrix.goos }}-${{ matrix.goarch }}-${{ env.TAG_NAME }}
+      run: gzip dist/proteus-${{ matrix.goos }}-${{ matrix.goarch }}-${{ env.TAG_NAME }}
 
     - name: Upload Release Asset
       uses: actions/upload-artifact@v3
