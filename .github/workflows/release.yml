@@ -27,7 +27,7 @@ jobs:
     - name: Build Binary
       run: |
         mkdir -p dist/
-        GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/proteus-${{ matrix.goos }}-${{ matrix.goarch }}
+        GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/proteus-${{ matrix.goos }}-${{ matrix.goarch }} ./cli
 
     - name: Compress Binary
       if: matrix.goos != 'windows'
