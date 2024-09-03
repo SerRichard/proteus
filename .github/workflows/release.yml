@@ -40,7 +40,7 @@ jobs:
     - name: Upload Release Asset
       uses: actions/upload-artifact@v3
       with:
-        name: proteus-${{ matrix.goos }}-${{ matrix.goarch }}-${{ env.TAG_NAME }}*
+        name: proteus-${{ matrix.goos }}-${{ matrix.goarch }}-${{ env.TAG_NAME }}
         path: dist/proteus-${{ matrix.goos }}-${{ matrix.goarch }}-${{ env.TAG_NAME }}*
 
   release:
