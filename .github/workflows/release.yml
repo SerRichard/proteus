@@ -59,7 +59,7 @@ jobs:
       run: pwd
   
     - name: List files in dist with absolute path
-      run: ls ${{ github.workspace }}
+      run: ls ${{ github.workspace }}/dist
   
     - name: Create Release
       id: create_release
