@@ -24,14 +24,18 @@ jobs:
       with:
         go-version: '1.23'
 
+    - name: Get the Tag
+      id: get_tag
+      run: echo "TAG_NAME=${GITHUB_REF##*/}" >> $GITHUB_ENV
+
     - name: Build Binary
       run: |
         mkdir -p dist/
-        GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/proteus-${{ matrix.goos }}-${{ matrix.goarch }} ./cli
+        GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/your-tool-${{ matrix.goos }}-${{ matrix.goarch }}-${{ env.TAG_NAME }}
 
     - name: Compress Binary
       if: matrix.goos != 'windows'
-      run: gzip dist/proteus-${{ matrix.goos }}-${{ matrix.goarch }}
+      run: gzip dist/your-tool-${{ matrix.goos }}-${{ matrix.goarch }}-${{ env.TAG_NAME }}
 
     - name: Upload Release Asset
       uses: actions/upload-artifact@v3
@@ -49,16 +53,11 @@ jobs:
       with:
         path: dist/
 
-    - name: List directory
-      run: ls .
-      
-    - name: List dist directory
-      run: ls dist
-
-    - name: Create Release
-      id: create_release
-      uses: softprops/action-gh-release@v1
-      with:
-        files: dist/*
+    - name: Create GitHub Release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh release create ${{ env.TAG_NAME }} \
+          dist/*-${{ env.TAG_NAME }}* \
+          --title "Release ${{ env.TAG_NAME }}" \
+          --notes "Automated release for ${{ env.TAG_NAME }}"
