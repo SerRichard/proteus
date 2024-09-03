@@ -39,32 +39,38 @@ jobs:
       if: matrix.goos != 'windows'
       run: gzip dist/proteus-${{ matrix.goos }}-${{ matrix.goarch }}-${{ env.TAG_NAME }}
 
-    - name: Upload Release Asset
-      uses: actions/upload-artifact@v3
+    - name: Get the Release ID
+      id: get_release
+      uses: actions/github-script@v6
       with:
-        name: proteus-${{ matrix.goos }}-${{ matrix.goarch }}-${{ env.TAG_NAME }}
-        path: dist/proteus-${{ matrix.goos }}-${{ matrix.goarch }}-${{ env.TAG_NAME }}*
-
-  release:
-    name: Create GitHub Release
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-    - name: Download Artifacts
-      uses: actions/download-artifact@v3
-      with:
-        path: dist/
-  
-    - name: Print current directory
-      run: pwd
-  
-    - name: List files in dist with absolute path
-      run: ls ${{ github.workspace }}/dist
-  
-    - name: Create Release
-      id: create_release
-      uses: softprops/action-gh-release@v1
-      with:
-        files: ${{ github.workspace }}/dist/*
+        script: |
+          const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
+          const tag = process.env.GITHUB_REF.replace('refs/tags/', '');
+          const release = await github.repos.getReleaseByTag({ owner, repo, tag });
+          return release.data.id;
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+
+    - name: Upload Release Asset (Linux and macOS)
+      if: matrix.goos != 'windows'
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: https://uploads.github.com/repos/${{ github.repository }}/releases/${{ steps.get_release.outputs.result }}/assets?name=proteus-${{ matrix.goos }}-${{ matrix.goarch }}-${{ github.ref_name }}.gz
+        asset_path: dist/proteus-${{ matrix.goos }}-${{ matrix.goarch }}-${{ github.ref_name }}.gz
+        asset_name: proteus-${{ matrix.goos }}-${{ matrix.goarch }}-${{ github.ref_name }}.gz
+        asset_content_type: application/gzip
+
+    - name: Upload Release Asset (Windows)
+      if: matrix.goos == 'windows'
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: https://uploads.github.com/repos/${{ github.repository }}/releases/${{ steps.get_release.outputs.result }}/assets?name=proteus-${{ matrix.goos }}-${{ matrix.goarch }}-${{ github.ref_name }}.exe
+        asset_path: dist/proteus-${{ matrix.goos }}-${{ matrix.goarch }}-${{ github.ref_name }}
+        asset_name: proteus-${{ matrix.goos }}-${{ matrix.goarch }}-${{ github.ref_name }}.exe
+        asset_content_type: application/octet-stream
