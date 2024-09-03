@@ -40,7 +40,7 @@ jobs:
     - name: Upload Release Asset
       uses: actions/upload-artifact@v3
       with:
-        name: proteus-${{ matrix.goos }}-${{ matrix.goarch }}
+        name: proteus-${{ matrix.goos }}-${{ matrix.goarch }}-${{ env.TAG_NAME }}*
         path: dist/proteus-${{ matrix.goos }}-${{ matrix.goarch }}-${{ env.TAG_NAME }}*
 
   release:
@@ -63,6 +63,6 @@ jobs:
       id: create_release
       uses: softprops/action-gh-release@v1
       with:
-        files: dist/*
+        files: ${{ github.workspace }}/dist/*
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
