@@ -49,8 +49,11 @@ jobs:
       with:
         path: dist/
 
+    - name: List directory
+      run: ls .
+      
     - name: List dist directory
-      run: ls -l .
+      run: ls dist
 
     - name: Create Release
       id: create_release
