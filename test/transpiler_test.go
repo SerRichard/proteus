@@ -70,24 +70,45 @@ func TestTranspileCommandLineToolArrayInputs(t *testing.T) {
 	}
 }
 
-// func TestTranspileCommandLineToolLinkFile(t *testing.T) {
+func TestTranspileCommandLineToolParamRef(t *testing.T) {
 
-// 	var input = "data/composite-cli/link/linkfile.cwl"
-// 	var output = "data/composite-cli/link/linkfile_argo_output.yaml"
+	var input = "data/composite-cli/param-ref/tar_param.cwl"
+	var inputs_file = "data/composite-cli/param-ref/tar_param_job.yml"
+	var output = "data/composite-cli/param-ref/tar_param_argo_output.yaml"
 
-// 	err := transpiler.ProcessFile(input, "", "")
-// 	if err != nil {
-// 		t.Logf("Error caught %d", err)
-// 		t.Fail()
-// 	}
+	err := transpiler.ProcessFile(input, inputs_file, "")
+	if err != nil {
+		t.Logf("Error caught %d", err)
+		t.Fail()
+	}
 
-// 	if _, err := os.Stat(output); err == nil {
-// 		e := os.Remove(output)
-// 		if e != nil {
-// 			log.Fatal(e)
-// 		}
-// 	}
-// }
+	if _, err := os.Stat(output); err == nil {
+		e := os.Remove(output)
+		if e != nil {
+			log.Fatal(e)
+		}
+	}
+}
+
+func TestTranspileCommandLineToolLocations(t *testing.T) {
+
+	var input = "data/composite-cli/param-ref/tar_param.cwl"
+	var inputs_file = "data/composite-cli/param-ref/tar_param_job.yml"
+	var output = "data/composite-cli/param-ref/tar_param_argo_output.yaml"
+
+	err := transpiler.ProcessFile(input, inputs_file, "")
+	if err != nil {
+		t.Logf("Error caught %d", err)
+		t.Fail()
+	}
+
+	if _, err := os.Stat(output); err == nil {
+		e := os.Remove(output)
+		if e != nil {
+			log.Fatal(e)
+		}
+	}
+}
 
 func TestTranspileWorkflow(t *testing.T) {
 

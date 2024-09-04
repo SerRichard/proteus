@@ -169,7 +169,6 @@ func (inputParameter CommandlineInputParameter) getInputBindings(inputs map[stri
 	}
 
 	if len(inputs) == 0 {
-
 		switch v := inputParameter.CommandlineInputParameter.Default.(type) {
 		case string:
 			binding.StringValue = &v
@@ -308,6 +307,7 @@ func emitArgumentParams(container *apiv1.Container,
 				continue
 			}
 			if binding.File == nil || binding.File.Path == nil {
+				log.Info("binding, ", binding.File)
 				return errors.New("file information was not available")
 			}
 			arg = *binding.File.Path
