@@ -1,0 +1,59 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+    creationTimestamp: null
+    name: generated-workflow-ocmdaguptz
+spec:
+    arguments:
+        parameters:
+            - name: wf_input
+              value: Hello!
+    entrypoint: global-template
+    templates:
+        - inputs: {}
+          metadata: {}
+          name: global-template
+          outputs: {}
+          steps:
+            - - arguments: {}
+                inline:
+                    container:
+                        args:
+                            - sleep 1; echo -n {{inputs.parameters.input_message}} > /tmp/hello_world.txt
+                        command:
+                            - sh
+                            - -c
+                        image: docker/whalesay:latest
+                        name: ""
+                        resources: {}
+                    inputs:
+                        parameters:
+                            - name: input_message
+                              value: '{{workflow.parameters.wf_input}}'
+                    metadata: {}
+                    outputs:
+                        parameters:
+                            - name: hello_param
+                              valueFrom:
+                                path: /tmp/hello_world.txt
+                name: generate-parameter
+            - - arguments: {}
+                inline:
+                    container:
+                        args:
+                            - '{{inputs.parameters.message}}'
+                        command:
+                            - cowsay
+                        image: docker/whalesay:latest
+                        name: ""
+                        resources: {}
+                    inputs:
+                        parameters:
+                            - name: message
+                              value: '{{steps.generate-parameter.outputs.parameters.hello_param}}'
+                    metadata: {}
+                    outputs: {}
+                name: consume-parameter
+status:
+    finishedAt: null
+    startedAt: null

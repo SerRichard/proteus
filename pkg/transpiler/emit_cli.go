@@ -27,7 +27,9 @@ type flatCommandlineInputParameter struct {
 	Type             cwl.Type
 	Label            *string
 	StringValue      *string               // string value
+	BoolValue        *bool                 // boolean value
 	IntValue         *int                  // int value
+	ArrayValue       *[]any                // Array value
 	Emit             bool                  // boolean value
 	File             *cwl.CWLFile          // file value
 	FileLocationData *cwl.FileLocationData // file location data
@@ -95,13 +97,11 @@ func dockerNotPresent() error              { return errors.New("DockerRequiremen
 func resourceRequirementNotPresent() error { return errors.New("ResourceRequirement was not found") }
 
 func findDockerRequirement(requirements cwl.Requirements) (*cwl.DockerRequirement, error) {
-	log.Info("Need DockerRequirement")
 	var docker *cwl.DockerRequirement
 	docker = nil
 	for _, req := range requirements {
 		d, ok := req.(cwl.DockerRequirement)
 		if ok {
-			log.Info("Found DockerRequirement")
 			docker = &d
 		}
 	}
@@ -115,11 +115,11 @@ func findDockerRequirement(requirements cwl.Requirements) (*cwl.DockerRequiremen
 
 func findResourceRequirement(requirements cwl.Requirements) (*cwl.ResourceRequirement, error) {
 	var resource *cwl.ResourceRequirement
+
 	resource = nil
 	for _, req := range requirements {
 		r, ok := req.(cwl.ResourceRequirement)
 		if ok {
-			log.Info("Found ResourceRequirement")
 			resource = &r
 		}
 	}
@@ -196,6 +196,10 @@ func (inputParameter CommandlineInputParameter) getInputBindings(inputs map[stri
 		binding.IntValue = input.IntData
 	case cwl.CWLFileKind:
 		binding.File = input.FileData
+	case cwl.CWLBoolKind:
+		binding.BoolValue = input.BoolData
+	case cwl.CWLArrayKind:
+		binding.ArrayValue = input.Array
 	default:
 		return nil, fmt.Errorf("%T unknown type", input.Kind)
 	}
@@ -329,7 +333,11 @@ func emitArguments(spec *v1alpha1.WorkflowSpec, bindings []flatCommandlineInputP
 		case cwl.CWLIntKind:
 			intString := fmt.Sprintf("%d", *binding.IntValue)
 			params = append(params, v1alpha1.Parameter{Name: *binding.Id, Value: (*v1alpha1.AnyString)(&intString)})
+		case cwl.CWLBoolKind:
+			boolString := fmt.Sprintf("%t", *binding.BoolValue)
+			params = append(params, v1alpha1.Parameter{Name: *binding.Id, Value: (*v1alpha1.AnyString)(&boolString)})
 		default:
+			log.Info("HERE ", binding.Type)
 			return fmt.Errorf("%T is not supported", binding.Type)
 		}
 	}
@@ -443,6 +451,11 @@ func emitPVC(spec *v1alpha1.WorkflowSpec, resourceReq *cwl.ResourceRequirement) 
 func emitInputArtifacts(template *v1alpha1.Template, inputs map[string]cwl.CWLInputEntry, locations cwl.FileLocations) error {
 	arts := make([]v1alpha1.Artifact, 0)
 
+	// If there are no locations, do not try to infer an artifact should exist.
+	if len(locations.Inputs) == 0 {
+		return nil
+	}
+
 	for key, inputEntry := range inputs {
 		if inputEntry.Kind != cwl.CWLFileKind {
 			continue
@@ -477,6 +490,12 @@ func evalCommandlineBindingOutputGlob(bglob *cwl.CommandlineOutputBindingGlob) (
 }
 
 func emitOutputArtifact(tmpl *v1alpha1.Template, output flatCommandlineOutputParameter, locations cwl.FileLocations) error {
+
+	// If there are no locations, do not try to infer an artifact should exist.
+	if len(locations.Outputs) == 0 {
+		return nil
+	}
+
 	if output.Type != cwl.CWLFileKind {
 		return errors.New("emitOutputArtifact only accepts CWLFileKind")
 	}
@@ -485,6 +504,7 @@ func emitOutputArtifact(tmpl *v1alpha1.Template, output flatCommandlineOutputPar
 	if err != nil {
 		return err
 	}
+
 	location, ok := locations.Outputs[*output.Id]
 	if !ok {
 		return fmt.Errorf("unable to find output for %s", *output.Id)
@@ -562,6 +582,8 @@ func EmitCommandlineTool(clTool *cwl.CommandLineTool, inputs map[string]cwl.CWLI
 	if err != nil {
 		return nil, err
 	}
+
+	log.Info("Need pvc? ", outputBindings)
 
 	if needPVC(outputBindings) {
 
