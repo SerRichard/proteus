@@ -1,6 +1,8 @@
 # Proteus
 
-Proteus is a tool for transpiling the Common Workflow Language into the Argo Workflow yaml structure.
+Proteus is a tool for transpiling resources from the Common Workflow Language into resources types compatible with Argo Workflows. 
+
+The input and output of Proteus is only files. The output file should represent a valid Argo Workflow resource, which can then be parsed directly into Argo Workflows.
 
 ![alt text](cwl2argo.png)
 
