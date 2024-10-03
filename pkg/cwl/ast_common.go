@@ -90,6 +90,7 @@ type CWLInputEntry struct {
 	BoolData   *bool
 	StringData *string
 	IntData    *int
+	Array      *[]any
 }
 
 type LoadListingEnum string
@@ -144,6 +145,14 @@ func (cwlInputEntry *CWLInputEntry) UnmarshalYAML(value *yaml.Node) error {
 	if err == nil {
 		cwlInputEntry.Kind = CWLStringKind
 		cwlInputEntry.StringData = &s
+		return nil
+	}
+
+	var arr []any
+	err = value.Decode(&arr)
+	if err == nil {
+		cwlInputEntry.Kind = CWLArrayKind
+		cwlInputEntry.Array = &arr
 		return nil
 	}
 

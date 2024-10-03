@@ -1,6 +1,6 @@
-cwlVersion: v1.0
+cwlVersion: v1.2
 class: CommandLineTool
-id: echo-tool
+id: param-ref
 requirements: 
   - class: DockerRequirement 
     dockerPull: ubuntu:20.04
@@ -8,17 +8,14 @@ requirements:
 
   - class: ResourceRequirement 
     outdirMin: 1Gi
-
-baseCommand: echo
+baseCommand: [tar, --extract]
 inputs:
-  message:
-    type: string
+  tarfile:
+    type: File
     inputBinding:
-      position: 1
-    default: "Hello!"  # Default input string
-
-outputs: 
-  hello_param:
+      prefix: --file
+outputs:
+  extracted_file:
     type: File
     outputBinding:
-      glob: /tmp/hello_world.txt
+      glob: $(inputs.extractfile)

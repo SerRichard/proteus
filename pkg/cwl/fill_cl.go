@@ -3,6 +3,7 @@ package cwl
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"gopkg.in/yaml.v3"
 )
@@ -62,6 +63,11 @@ func (tys *CWLTypes) UnmarshalYAML(value *yaml.Node) error {
 			return err
 		}
 		var ty CWLType
+
+		if strings.Contains(s, "[]") {
+			s = "array"
+		}
+
 		switch s {
 		case "string":
 			ty.Kind = CWLStringKind
@@ -81,11 +87,14 @@ func (tys *CWLTypes) UnmarshalYAML(value *yaml.Node) error {
 			ty.Kind = CWLFileKind
 		case "Directory":
 			ty.Kind = CWLDirectoryKind
+		case "array":
+			ty.Kind = CWLArrayKind
 		default:
 			return fmt.Errorf("%s is not a supported type", s)
 		}
 		newTys = append(newTys, ty)
 	case yaml.MappingNode:
+		fmt.Println("MappingNode ", value)
 		return errors.New("complex types not supported yet")
 	case yaml.SequenceNode:
 		return errors.New("array types not supported yet")

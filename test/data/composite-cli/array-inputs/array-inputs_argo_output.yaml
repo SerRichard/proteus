@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+    creationTimestamp: null
+    name: array-inputs
+spec:
+    arguments: {}
+    entrypoint: array-inputs
+    templates:
+        - container:
+            args:
+                - -A
+                - '{{inputs.parameters.filesA}}'
+                - '{{inputs.parameters.filesB}}'
+                - -C={{inputs.parameters.filesC}}
+            command:
+                - echo
+            image: ubuntu:20.04
+            name: ""
+            resources: {}
+            volumeMounts:
+                - mountPath: /tmp
+                  name: argovolume
+            workingDir: /tmp
+          inputs: {}
+          metadata: {}
+          name: array-inputs
+          outputs: {}
+    volumeClaimTemplates:
+        - metadata:
+            creationTimestamp: null
+            name: argovolume
+          spec:
+            accessModes:
+                - ReadWriteMany
+            resources:
+                requests:
+                    storage: 1Gi
+          status: {}
+status:
+    finishedAt: null
+    startedAt: null
